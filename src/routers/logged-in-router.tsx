@@ -1,7 +1,7 @@
 import React from "react";
 
 const LoggedInRouter = () => {
-  return <span>asdasd</span>;
+  return <span>LoggedInRouter</span>;
 };
 
 export default LoggedInRouter;
