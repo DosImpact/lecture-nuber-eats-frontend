@@ -2,6 +2,11 @@ import { gql, useMutation } from "@apollo/client";
 import React from "react";
 import { useForm } from "react-hook-form";
 import FormError from "../components/FormError";
+import { dodoLogin, dodoLoginVariables } from "../__generated__/dodoLogin";
+import {
+  loginMutation,
+  loginMutationVariables,
+} from "../__generated__/loginMutation";
 
 interface ILoginForm {
   email: string;
@@ -9,8 +14,9 @@ interface ILoginForm {
 }
 
 const LOGIN_MUTATION = gql`
-  mutation dodoLogin($email: String!, $password: String!) {
-    login(input: { email: $email, password: $password }) {
+  # mutation loginMutation($email: String!, $password: String!) {
+  mutation loginMutation($loginInput: LoginInput!) {
+    login(input: $loginInput) {
       error
       ok
       token
@@ -19,15 +25,20 @@ const LOGIN_MUTATION = gql`
 `;
 
 export const Login = () => {
-  const [loginMutation, { loading, data, error }] = useMutation(LOGIN_MUTATION);
+  const [loginMutation, { loading, data, error }] = useMutation<
+    loginMutation,
+    loginMutationVariables
+  >(LOGIN_MUTATION);
 
   const { register, getValues, errors, handleSubmit } = useForm<ILoginForm>();
   const onSubmit = () => {
     const { email, password } = getValues();
     loginMutation({
       variables: {
-        email,
-        password,
+        loginInput: {
+          email,
+          password,
+        },
       },
     });
   };

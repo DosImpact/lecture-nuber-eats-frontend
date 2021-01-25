@@ -28,6 +28,9 @@
     "prestart": "npm run tailwind:build",
     "start": "react-scripts start",
     "tailwind:build": "tailwind build ./src/styles/tailwind.css -o ./src/styles/styles.css",
+    "preapollo:codegen": "rimraf src/__generated__",
+    "apollo:codegen": "apollo client:codegen src/__generated__ --target=typescript --outputFlat",
+    "apollo:download-schema": "apollo client:download-schema schema.gql",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -51,6 +54,7 @@
     ]
   },
   "devDependencies": {
-    "@types/react-router-dom": "^5.1.7"
+    "@types/react-router-dom": "^5.1.7",
+    "rimraf": "^3.0.2"
   }
 }
