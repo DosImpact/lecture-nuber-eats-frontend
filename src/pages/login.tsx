@@ -1,8 +1,7 @@
-import { gql, useMutation } from "@apollo/client";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 import React from "react";
 import { useForm } from "react-hook-form";
 import FormError from "../components/FormError";
-import { dodoLogin, dodoLoginVariables } from "../__generated__/dodoLogin";
 import {
   loginMutation,
   loginMutationVariables,
@@ -25,24 +24,38 @@ const LOGIN_MUTATION = gql`
 `;
 
 export const Login = () => {
-  const [loginMutation, { loading, data, error }] = useMutation<
-    loginMutation,
-    loginMutationVariables
-  >(LOGIN_MUTATION);
+  const {
+    register,
+    getValues,
+    errors,
+    handleSubmit,
+    watch,
+  } = useForm<ILoginForm>();
 
-  const { register, getValues, errors, handleSubmit } = useForm<ILoginForm>();
+  const [
+    loginMutation,
+    { loading, data: loginMutationResult, error },
+  ] = useMutation<loginMutation, loginMutationVariables>(LOGIN_MUTATION, {
+    variables: {
+      loginInput: {
+        email: watch("email"),
+        password: watch("password"),
+      },
+    },
+    onCompleted: (data: loginMutation) => {
+      if (data.login.ok) {
+        console.log(data.login.token);
+      }
+    },
+  });
+
   const onSubmit = () => {
     const { email, password } = getValues();
-    loginMutation({
-      variables: {
-        loginInput: {
-          email,
-          password,
-        },
-      },
-    });
+    loginMutation();
   };
-  console.log(data);
+  console.log(loginMutationResult);
+
+  console.log(errors);
 
   return (
     <div className="h-screen flex items-center justify-center bg-gray-800">
@@ -78,6 +91,10 @@ export const Login = () => {
             <FormError errorMessage="Password must be more than 5 chars." />
           )}
           <button className="mt-3 btn">Log In</button>
+          {loading && <span>loading...</span>}
+          {loginMutationResult?.login.error && (
+            <FormError errorMessage={loginMutationResult?.login.error} />
+          )}
         </form>
       </div>
     </div>
