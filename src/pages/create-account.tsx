@@ -1,7 +1,12 @@
 import React from "react";
+import FormExample01 from "../routers/form-example";
 
 const CreateAccount = () => {
-  return <div>CreateAccount</div>;
+  return (
+    <div>
+      <FormExample01 />
+    </div>
+  );
 };
 
 export default CreateAccount;
