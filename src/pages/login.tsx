@@ -1,15 +1,38 @@
+import { gql, useMutation } from "@apollo/client";
 import React from "react";
 import { useForm } from "react-hook-form";
 import FormError from "../components/FormError";
 
 interface ILoginForm {
-  email?: string;
-  password?: string;
+  email: string;
+  password: string;
 }
 
+const LOGIN_MUTATION = gql`
+  mutation dodoLogin($email: String!, $password: String!) {
+    login(input: { email: $email, password: $password }) {
+      error
+      ok
+      token
+    }
+  }
+`;
+
 export const Login = () => {
+  const [loginMutation, { loading, data, error }] = useMutation(LOGIN_MUTATION);
+
   const { register, getValues, errors, handleSubmit } = useForm<ILoginForm>();
-  const onSubmit = () => {};
+  const onSubmit = () => {
+    const { email, password } = getValues();
+    loginMutation({
+      variables: {
+        email,
+        password,
+      },
+    });
+  };
+  console.log(data);
+
   return (
     <div className="h-screen flex items-center justify-center bg-gray-800">
       <div className="bg-white w-full max-w-lg pt-10 pb-7 rounded-lg text-center">
@@ -30,7 +53,7 @@ export const Login = () => {
             <FormError errorMessage={errors.email?.message} />
           )}
           <input
-            ref={register({ required: "Password is required", minLength: 10 })}
+            ref={register({ required: "Password is required", minLength: 5 })}
             required
             name="password"
             type="password"
@@ -41,7 +64,7 @@ export const Login = () => {
             <FormError errorMessage={errors.password?.message} />
           )}
           {errors.password?.type === "minLength" && (
-            <FormError errorMessage="Password must be more than 10 chars." />
+            <FormError errorMessage="Password must be more than 5 chars." />
           )}
           <button className="mt-3 btn">Log In</button>
         </form>
