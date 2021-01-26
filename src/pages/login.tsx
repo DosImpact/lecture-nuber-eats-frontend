@@ -7,11 +7,13 @@ import {
   loginMutationVariables,
 } from "../__generated__/loginMutation";
 
+//폼 인터페이스
 interface ILoginForm {
   email: string;
   password: string;
 }
 
+// 로그인 뮤테이션 gql 정의
 const LOGIN_MUTATION = gql`
   # mutation loginMutation($email: String!, $password: String!) {
   mutation loginMutation($loginInput: LoginInput!) {
@@ -24,6 +26,7 @@ const LOGIN_MUTATION = gql`
 `;
 
 export const Login = () => {
+  // 훅폼
   const {
     register,
     getValues,
@@ -32,30 +35,41 @@ export const Login = () => {
     watch,
   } = useForm<ILoginForm>();
 
-  const [
+  // 로그인 뮤테이션 처리
+  const [loginMutation, { loading, data: loginMutationResult }] = useMutation<
     loginMutation,
-    { loading, data: loginMutationResult, error },
-  ] = useMutation<loginMutation, loginMutationVariables>(LOGIN_MUTATION, {
+    loginMutationVariables
+  >(LOGIN_MUTATION, {
     variables: {
       loginInput: {
         email: watch("email"),
         password: watch("password"),
       },
     },
+    // 성공시
     onCompleted: (data: loginMutation) => {
+      // 데이터 유입 - 토큰  (상단의 data와 동일함 )
       if (data.login.ok) {
         console.log(data.login.token);
       }
     },
+    // 응답 실패시
+    onError: (error: ApolloError) => {
+      // Server 가 다운 - 404 애러등 ( 네트워크 인프라 문제 )
+      // 참고) Server 202 의 애러는 의도적인 애러이다.
+      console.log(error.message);
+    },
   });
 
   const onSubmit = () => {
-    const { email, password } = getValues();
+    // form to API 연결 1. 데이터를 가져와서 Mutation에 직접 넣을 수 있다.
+    // const { email, password } = getValues();
     loginMutation();
+    // form to API 연결 2. hook form의 watch 기능을 이용해서 mutation에 실시간 연결
   };
-  console.log(loginMutationResult);
 
-  console.log(errors);
+  // console.log(loginMutationResult);
+  // console.log(errors);
 
   return (
     <div className="h-screen flex items-center justify-center bg-gray-800">
