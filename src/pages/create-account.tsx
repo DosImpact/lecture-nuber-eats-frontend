@@ -1,5 +1,5 @@
 import React from "react";
-import FormExample01 from "../routers/form-example";
+import FormExample01 from "../example/form-example";
 
 const CreateAccount = () => {
   return (

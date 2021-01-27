@@ -12,6 +12,7 @@
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "apollo": "^2.32.1",
+    "apollo3-cache-persist": "^0.9.1",
     "autoprefixer": "^10.2.3",
     "graphql": "^15.4.0",
     "postcss": "^8.2.4",
